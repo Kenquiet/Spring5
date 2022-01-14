@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--
+     1. 映射对象
+        注意：如果映射的对象中没有 constructor-arg 说明调用无参构造方法
+      -->
+    <bean id="user" class="com.xwz.spring5.User">
+        <!-- 标志有参构造方法       -->
+        <constructor-arg name="name" value="张益达" />
+        <!-- 构造函数初始化   -->
+        <property name="no" value="2022010701" />
+        <property name="school" value="哔哩哔哩大学" />
+        <!-- 构造函数初始化 设置一个null   -->
+        <property name="classNo">
+            <null />
+        </property>
+
+        <!-- 有特殊符号的，例如《老子》, 使用 CDATA 来进行标记 -->
+        <property name="books">
+            <value><![CDATA[<<老子>>]]></value>
+        </property>
+    </bean>
+</beans>

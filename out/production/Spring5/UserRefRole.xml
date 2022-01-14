@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--用户调用权限类-->
+    <!-- 1.创建 role 类  -->
+    <bean id="role" class="com.xwz.spring5.Role"/>
+    <!-- 2.创建 userRole 类，注入 role类  -->
+    <bean id="userRole" class="com.xwz.spring5.UserRole">
+        <!--  在一个类中注入另一个类  -->
+        <property name="role" ref="role" />
+    </bean>
+</beans>

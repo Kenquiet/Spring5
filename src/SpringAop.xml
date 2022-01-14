@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+">
+    <!-- 开启扫描： base-package 是包名的路径，
+        如果需要扫描多个包，可以用逗号隔开
+        如果需要扫描包下的所有包，那就直接写父包，这样就会扫描父包下所有子包
+    -->
+    <context:component-scan base-package="com.xwz.aop" />
+</beans>

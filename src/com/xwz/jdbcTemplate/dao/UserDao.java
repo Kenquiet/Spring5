@@ -13,4 +13,5 @@ public interface UserDao {
   public List<UserInfo> findAll(int page, int pageSize);
 
   public void batchList(List<Object[]> batchArgs);
+  public void batchUpdateUser(List<Object[]> batchArgs);
 }

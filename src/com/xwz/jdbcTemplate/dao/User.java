@@ -14,6 +14,7 @@ public class User implements UserDao{
   @Autowired
   private JdbcTemplate jdbcTemplate;
 
+  // 添加
   @Override
   public void add(UserInfo userInfo) {
     String sql = "insert into t_user(userName, status) values (?,?)";
@@ -21,6 +22,7 @@ public class User implements UserDao{
     System.out.println(add);
   }
 
+  // 更新
   @Override
   public void update(UserInfo userInfo) {
     String sql = "update t_user set userName=?, status=? where id=?";
@@ -29,6 +31,7 @@ public class User implements UserDao{
     System.out.println(update);
   }
 
+  // 删除
   @Override
   public void delete(int id) {
     String sql = "delete from t_user where id=?";
@@ -36,6 +39,7 @@ public class User implements UserDao{
     System.out.println(update);
   }
 
+  // 查询总值
   @Override
   public int findCount() {
     String sql = "select count(*) from t_user";
@@ -44,6 +48,7 @@ public class User implements UserDao{
     return count;
   }
 
+  // 查询详情
   @Override
   public UserInfo findInfo(int id) {
     String sql = "select * from t_user where id=?";
@@ -52,6 +57,7 @@ public class User implements UserDao{
     return userInfo;
   }
 
+  // 查询列表
   @Override
   public List<UserInfo> findAll(int page, int pageSize) {
     String sql = "select * from t_user limit ?,?";
@@ -62,9 +68,17 @@ public class User implements UserDao{
     return list;
   }
 
+  // 批量添加
   @Override
   public void batchList(List<Object[]> batchArgs) {
     String sql = "insert into t_user(userName, status) values(?,?)";
+    int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+    System.out.println(Arrays.toString(ints));
+  }
+
+  @Override
+  public void batchUpdateUser(List<Object[]> batchArgs) {
+    String sql = "update t_user set userName=?, status=? where id = ?";
     int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
     System.out.println(Arrays.toString(ints));
   }

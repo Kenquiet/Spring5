@@ -1121,7 +1121,26 @@ public class UserProxy {
          System.out.println(Arrays.toString(ints));
       }
    ```
-##### 2. 批量查询
+##### 2. 批量修改
+1. UserDao 接口里边添加 batchUpdateUser 方法约束
+   ```java
+      public void batchUpdateUser(List<Object[]> batchArgs);
+   ```
+2. 在 SuerService 类中实现  batchUpdateUser 方法, 并调用 UserDao 的 batchUpdateUser 方法
+   ```java
+      public void batchUpdateUser(List<Object[]> batchArgs) {
+         userDao.batchUpdateUser(batchArgs);
+      }
+   ```
+3. User 类中实现 batchUpdateUser 方法
+   ```java
+      @Override
+      public void batchUpdateUser(List<Object[]> batchArgs) {
+         String sql = "update t_user set userName=?, status=? where id = ?";
+         int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+         System.out.println(Arrays.toString(ints));
+      }
+   ```
 ##### 3. 批量删除
 # * 事务管理
 

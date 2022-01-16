@@ -1162,6 +1162,12 @@ public class UserProxy {
       }
    ```
 # * 事务管理
+1. 事务添加到JavaEE三层结构里边的Servise层（业务逻辑层）
+2. 在Spring进行事务有两种方式：编程式（spring中少用） 和 声明式（spring 中常用）
+3. 声明式事务管理
+   - 基于注解
+   - 基于xml配置
+
 
 # * spring5新特性
 

@@ -5,13 +5,15 @@ import com.xwz.jdbcTemplate.entity.UserInfo;
 import java.util.List;
 
 public interface UserDao {
-  public void add(UserInfo userInfo);
-  public void update(UserInfo userInfo);
-  public void delete(int id);
-  public int findCount();
-  public UserInfo findInfo(int id);
-  public List<UserInfo> findAll(int page, int pageSize);
+  void add(UserInfo userInfo);
+  void update(UserInfo userInfo);
+  void delete(int id);
+  int findCount();
+  UserInfo findInfo(int id);
+  List<UserInfo> findAll(int page, int pageSize);
 
-  public void batchList(List<Object[]> batchArgs);
-  public void batchUpdateUser(List<Object[]> batchArgs);
+  void batchList(List<Object[]> batchArgs);
+  void batchUpdateUser(List<Object[]> batchArgs);
+
+  void batchDelete(List<Object[]> batchArgs);
 }

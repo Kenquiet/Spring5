@@ -37,8 +37,12 @@ public class UserService {
   public void batchList(List<Object[]> batchArgs) {
     userDao.batchList(batchArgs);
   }
+
   public void batchUpdateUser(List<Object[]> batchArgs) {
     userDao.batchUpdateUser(batchArgs);
   }
 
+  public void batchDelete(List<Object[]> batchArgs) {
+    userDao.batchDelete(batchArgs);
+  }
 }

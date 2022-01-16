@@ -83,4 +83,11 @@ public class User implements UserDao{
     System.out.println(Arrays.toString(ints));
   }
 
+  @Override
+  public void batchDelete(List<Object[]> batchArgs) {
+    String sql = "delete from t_user where id=?";
+    int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+    System.out.println(Arrays.toString(ints));
+  }
+
 }

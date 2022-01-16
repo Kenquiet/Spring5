@@ -1142,6 +1142,25 @@ public class UserProxy {
       }
    ```
 ##### 3. 批量删除
+1. UserDao 接口里边添加 batchDeleteUser 方法约束
+   ```java
+      public void batchDeleteUser(List<Object[]> batchArgs);
+   ```
+2. 在 SuerService 类中实现  batchDeleteUser 方法, 并调用 UserDao 的 batchDeleteUser 方法
+   ```java
+      public void batchDeleteUser(List<Object[]> batchArgs) {
+         userDao.batchDeleteUser(batchArgs);
+      }
+   ```
+3. User 类中实现 batchDeleteUser 方法
+   ```java
+      @Override
+      public void batchDeleteUser(List<Object[]> batchArgs) {
+         String sql = "delete from t_user where id = ?";
+         int[] ints = jdbcTemplate.batchUpdate(sql, batchArgs);
+         System.out.println(Arrays.toString(ints));
+      }
+   ```
 # * 事务管理
 
 # * spring5新特性

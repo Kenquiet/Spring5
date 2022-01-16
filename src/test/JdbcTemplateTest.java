@@ -1,6 +1,5 @@
 package test;
 
-import com.xwz.jdbcTemplate.entity.UserInfo;
 import com.xwz.jdbcTemplate.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -31,11 +30,17 @@ public class JdbcTemplateTest {
 //    userService.findCount();
 //    userService.findInfo(6);
 //    userService.findAll(1,20);
+//    List<Object[]> list = new ArrayList<>();
+//    Object[] o1 = { "测试1", 1 };
+//    Object[] o2 = { "测试2", 1 };
+//    list.add(o1);
+//    list.add(o2);
+//    userService.batchList(list);
     List<Object[]> list = new ArrayList<>();
-    Object[] o1 = { "测试1", 1 };
-    Object[] o2 = { "测试2", 1 };
+    Object[] o1 = {5};
+    Object[] o2 = {6};
     list.add(o1);
     list.add(o2);
-    userService.batchList(list);
+    userService.batchDelete(list);
   }
 }

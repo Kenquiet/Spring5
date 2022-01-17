@@ -1162,12 +1162,144 @@ public class UserProxy {
       }
    ```
 # * 事务管理
+### 准备工作
+1. 完整代码三步走：后边倒叙讲解
+   - 新建dao，dao新建接口Account（面向接口编程），新建 接口实现类 AccountImp
+   ```java
+      @Repository
+      public class AccountImp implements Account{
+         @Autowired
+         private JdbcTemplate jdbcTemplate;
+
+         @Override
+         public void addMoney() {
+            String sql = "update t_account set money=money+? where id = ?";
+            jdbcTemplate.update(sql, 1000, 1);
+         }
+
+         @Override
+         public void reduceMoney() {
+            String sql = "update t_account set money=money-? where id = ?";
+            jdbcTemplate.update(sql, 1000, 2);
+         }
+      }
+   ```
+   - 新建service，service 中新建 AccountService类
+   ```java
+      @Repository
+      @Transactional
+      public class AccountService {
+         @Autowired
+         public Account account;
+
+         public void transactionMoney() {
+
+            account.reduceMoney(); // 从账户转出
+
+            account.addMoney(); // 转进账户中
+         }
+      }
+   ```
+   - 新建 xml 配置文件，在文件目录下新建 transaction.xml
+   ```xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <beans xmlns="http://www.springframework.org/schema/beans"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xmlns:tx="http://www.springframework.org/schema/tx"
+            xsi:schemaLocation="
+                  http://www.springframework.org/schema/beans
+                  http://www.springframework.org/schema/beans/spring-beans.xsd
+                  http://www.springframework.org/schema/context
+                  http://www.springframework.org/schema/context/spring-context.xsd
+                  http://www.springframework.org/schema/tx
+                  http://www.springframework.org/schema/tx/spring-tx.xsd
+      ">
+         <context:component-scan base-package="com.xwz.transaction" />
+         <!-- 引入外部文件 -->
+         <context:property-placeholder location="classpath:com/xwz/transaction/jdbc.properties" />
+         <!-- 配置连接池  -->
+         <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+            <property name="driverClassName" value="${prop.Driver}" />
+            <property name="url" value="${prop.Url}"/>
+            <property name="username" value="${prop.user}" />
+            <property name="password" value="${prop.password}" />
+         </bean>
+
+         <!-- 配置jdbcTemplate 对象 -->
+         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <!--  注入数据库链接信息  -->
+            <property name="dataSource" ref="dataSource" />
+         </bean>
+
+         <!-- 创建事务管理器 -->
+         <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <!--   注入数据源，也就是数据库链接     -->
+            <property name="dataSource" ref="dataSource" />
+         </bean>
+         <!-- 开启事务注解 -->
+         <tx:annotation-driven transaction-manager="transactionManager" />
+      </beans>
+   ```
+   - 额外新建jdbc配置文件 同在文件目录下：jdbc.properties
+   ```properties
+      prop.Driver=com.mysql.cj.jdbc.Driver
+      prop.Url=jdbc:mysql://localhost:3306/userdb
+      prop.user=root
+      prop.password=root
+   ```
+   - 在数据库中新建一个表，t_account，字段有 id  c_name，money 加入两条数据，
+### 基础讲解
 1. 事务添加到JavaEE三层结构里边的Servise层（业务逻辑层）
 2. 在Spring进行事务有两种方式：编程式（spring中少用） 和 声明式（spring 中常用）
 3. 声明式事务管理
    - 基于注解
-   - 基于xml配置
+   - 基于xml配置（少用）
+### 基于注解 (参考 `com.xwz.transaction` 包的代码)
+1. 创建事务管理器
+   ```xml
+       <!-- 创建事务管理器 -->
+      <bean
+         id="transactionManager"
+         class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+      >
+         <!--   注入数据源，也就是数据库链接     -->
+         <property name="dataSource" ref="dataSource" />
+      </bean>
+   ```
+2. 在spring 配置文件，开启事务注解
+   - 就是添加一个 tx 命名空间
+   ```xml
+   <beans
+      xmlns:tx="http://www.springframework.org/schema/tx"
+      xsi:schemaLocation="
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+   "></beans>
+   ```
+   - 开启事务注解
+   ```xml
+      <!-- 开启事务注解 -->
+      <tx:annotation-driven transaction-manager="transactionManager" />
+   ```
+3. 在service类上（或者service 方法上）添加事务注解
+   - @Transactional 这个注解可以加到类上，也可以加到方法上
+   - 加到类上就是对整个类进行事务管理
+   - 加到方法上就是对这个方法进行事务管理
+   ```java
+      @Repository
+      @Transactional
+      public class AccountService {
+         @Autowired
+         public Account account;
 
+         public void transactionMoney() {
 
+            account.reduceMoney(); // 从账户转出
+
+            account.addMoney(); // 转进账户中
+         }
+      }
+   ```
 # * spring5新特性
 

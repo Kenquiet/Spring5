@@ -1282,7 +1282,7 @@ public class UserProxy {
       <!-- 开启事务注解 -->
       <tx:annotation-driven transaction-manager="transactionManager" />
    ```
-3. 在service类上（或者service 方法上）添加事务注解
+3. 在service类上（或者service 方法上）添加事务注解 
    - @Transactional 这个注解可以加到类上，也可以加到方法上
    - 加到类上就是对整个类进行事务管理
    - 加到方法上就是对这个方法进行事务管理
@@ -1301,5 +1301,31 @@ public class UserProxy {
          }
       }
    ```
+### 事务操作(声明式事务管理参数配置)
+##### 在service 类上面添加注解@Transactional，在这个注解里边可以配置相关参数
+```java
+   @Transactional
+   public void add() {
+      // 调用update 方法
+      update()
+   }
+
+   public void update() {}
+```
+##### propagation 事务传播行为
+1. 事务方法： 对数据库表数据进行操作的放法（dao中的实现类中的 addMoney 方法）
+2. spring 框架中对事务传播行为有7中，其中主要了解两种
+   - REQUIRED：如果当前存在事务，则加入该事务，如果当前不存在事务，则创建一个新的事务。
+   - REQUIRED_NEW: 重新创建一个新的事务，如果当前存在事务，延缓当前的事务。
+   - SUPPORTS： 如果当前存在事务，则加入该事务；如果当前不存在事务，则以非事务的方式继续运行
+   - NOT_SUPPORTED： 以非事务的方式运行，如果当前存在事务，暂停当前的事务
+   - MANDATORY： 如果当前存在事务，则加入该事务；如果当前不存在事务，则抛出异常
+   - NEVER：以非事务的方式运行，如果当前存在事务，则抛出异常
+   - NESTED：如果没有，就新建一个事务；如果有，就在当前事务中嵌套其他事务
+2. ioslation 事务隔离级别
+3. timeout 超时时间
+4. readOlay 是否只读
+5. rollbackFor： 回滚
+6. noRollbackFor 不回滚
 # * spring5新特性
 

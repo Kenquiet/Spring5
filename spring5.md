@@ -1312,20 +1312,97 @@ public class UserProxy {
 
    public void update() {}
 ```
-##### propagation 事务传播行为
-1. 事务方法： 对数据库表数据进行操作的放法（dao中的实现类中的 addMoney 方法）
-2. spring 框架中对事务传播行为有7中，其中主要了解两种
-   - REQUIRED：如果当前存在事务，则加入该事务，如果当前不存在事务，则创建一个新的事务。
-   - REQUIRED_NEW: 重新创建一个新的事务，如果当前存在事务，延缓当前的事务。
-   - SUPPORTS： 如果当前存在事务，则加入该事务；如果当前不存在事务，则以非事务的方式继续运行
-   - NOT_SUPPORTED： 以非事务的方式运行，如果当前存在事务，暂停当前的事务
-   - MANDATORY： 如果当前存在事务，则加入该事务；如果当前不存在事务，则抛出异常
-   - NEVER：以非事务的方式运行，如果当前存在事务，则抛出异常
-   - NESTED：如果没有，就新建一个事务；如果有，就在当前事务中嵌套其他事务
+1. propagation 事务传播行为
+   1. 事务方法： 对数据库表数据进行操作的放法（dao中的实现类中的 addMoney 方法）
+   2. spring 框架中对事务传播行为有7中，其中主要了解两种
+      - REQUIRED：如果当前存在事务，则加入该事务，如果当前不存在事务，则创建一个新的事务。
+      - REQUIRED_NEW: 重新创建一个新的事务，如果当前存在事务，延缓当前的事务。
+      - SUPPORTS： 如果当前存在事务，则加入该事务；如果当前不存在事务，则以非事务的方式继续运行
+      - NOT_SUPPORTED： 以非事务的方式运行，如果当前存在事务，暂停当前的事务
+      - MANDATORY： 如果当前存在事务，则加入该事务；如果当前不存在事务，则抛出异常
+      - NEVER：以非事务的方式运行，如果当前存在事务，则抛出异常
+      - NESTED：如果没有，就新建一个事务；如果有，就在当前事务中嵌套其他事务
 2. ioslation 事务隔离级别
-3. timeout 超时时间
-4. readOlay 是否只读
+   - 解决sql读 的 脏读，幻读
+3. timeout 超时时间，默认是-1，可以设置秒
+4. readOlay 是否只读 默认是 false
+   -  设置为true，那么这个业务方法只能读，不能写
 5. rollbackFor： 回滚
+   - 出现指定异常时，进行事务回滚
 6. noRollbackFor 不回滚
-# * spring5新特性
+   - 出现指定异常时，不进行事务回滚
+### 完全注解方式（用class 代替了xml）
+新建一个TxConfig
+```java
+   /**
+   * 完全注解的方式，就是对 transaction.xml 进行注解化
+   * */
+   @Configuration // 配置类
+   @ComponentScan(basePackages = "com.xwz.transaction") // 开启扫描
+   @EnableTransactionManagement // 开启事务
+   public class TxConfig {
+      // 获取配置文件
+      String resourceFile = "com.xwz.transaction.jdbc";
+      ResourceBundle bundle = ResourceBundle.getBundle(resourceFile);
 
+      // 配置连接池
+      @Bean
+      public DruidDataSource getDruidDataSource() {
+         DruidDataSource druidDataSource = new DruidDataSource();
+         druidDataSource.setDriverClassName(bundle.getString("prop.Driver"));
+         druidDataSource.setUrl(bundle.getString("prop.Url"));
+         druidDataSource.setUsername(bundle.getString("prop.user"));
+         druidDataSource.setPassword(bundle.getString("prop.password"));
+         return  druidDataSource;
+      }
+
+      // 配置jdbcTemplate
+      @Bean
+      public JdbcTemplate getJdbcTemplate(DruidDataSource dataSource) {
+         JdbcTemplate jdbcTemplate = new JdbcTemplate();
+         jdbcTemplate.setDataSource(dataSource);
+         return jdbcTemplate;
+      }
+
+      // 创建事务管理器
+      @Bean
+      public DataSourceTransactionManager getDataSourceTransactionManager(DruidDataSource dataSource) {
+         DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+         transactionManager.setDataSource(dataSource);
+         return  transactionManager;
+      }
+   }
+```
+测试 类中使用这个方法测试
+```java
+   @Test
+   public void testAnnotation() {
+      ApplicationContext context =
+         new AnnotationConfigApplicationContext(TxConfig.class);
+      AccountService accountService = context.getBean("accountService", AccountService.class);
+      accountService.transactionMoney();
+   }
+```
+ 
+# * spring5新特性
+#### 整合 JUnit5 的特性(单元测试)
+```java
+import com.xwz.transaction.TxConfig;
+import com.xwz.transaction.service.AccountService;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+@ExtendWith(SpringExtension.class) // 创建测试框架
+@ContextConfiguration(classes = TxConfig.class) // 加载配置文件，这里是需要配置全注解扫描
+public class JTest5 {
+  @Autowired
+  private AccountService accountService;
+  @Test
+  public void test() {
+    accountService.transactionMoney();
+  }
+}
+```
